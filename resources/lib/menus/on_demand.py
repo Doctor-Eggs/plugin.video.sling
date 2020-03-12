@@ -33,7 +33,7 @@ def onDemandChannel(self):
         getChannels(self)
 
     if self.params['guid'] not in self.Channels:
-        new_channel = Channel(self.params['guid'], self.endPoints, self.db)
+        new_channel = Channel(self.params['guid'], self.endPoints, self.DB)
         self.Channels[self.params['guid']] = new_channel
 
     log('On Demand Channel %s Menu' % self.name)
@@ -54,7 +54,7 @@ def onDemandChannelCategory(self):
         getChannels(self)
 
     if self.params['guid'] not in self.Channels:
-        new_channel = Channel(self.params['guid'], self.endPoints, self.db)
+        new_channel = Channel(self.params['guid'], self.endPoints, self.DB)
         self.Channels[self.params['guid']] = new_channel
 
     channel = self.Channels[self.params['guid']]
@@ -119,14 +119,14 @@ def onDemandChannelCategory(self):
                 infoLabels['genre'] = 'Live Program'
                 stamp = datetime.datetime.fromtimestamp(asset['Start']).strftime('%m/%d/%Y')
                 infoLabels['title'] = '%s - %s' % (stamp, infoLabels['title'])
-            addLink(title, self.handleID, asset['Playlist_URL'], mode, infoLabels, infoArt)
+            addLink(title, self.handleID, '%s?channel=%s' % (asset['Playlist_URL'], channel.GUID), mode, infoLabels, infoArt)
         elif asset['Type'] == 'linear':
             if asset['Release_Year'] > 0:
                 infoLabels['genre'] = 'Movie'
                 infoLabels['title'] += ' (%i)' % asset['Release_Year']
             else:
                 infoLabels['genre'] = 'Live Program'
-            addLink(title, self.handleID, asset['Playlist_URL'], mode, infoLabels, infoArt)
+            addLink(title, self.handleID, '%s?channel=%s' % (asset['Playlist_URL'], channel.GUID), mode, infoLabels, infoArt)
         elif asset['Type'] == 'series':
             infoLabels['genre'] = 'Show'
             context_items = [
@@ -140,7 +140,7 @@ def onDemandChannelCategory(self):
 
 def onDemandUpdate(self):
     updated = False
-    channel = Channel(self.params['guid'], self.endPoints, self.db)
+    channel = Channel(self.params['guid'], self.endPoints, self.DB)
     categories = channel.getOnDemandCategories()
     for category in categories:
         category_name = category['Name']
